@@ -42,7 +42,7 @@ void mostra_baralho(Carta *baralho){
     }
 }
 
-void conta_cartas_baralho(Carta *baralho){
+int conta_cartas_baralho(Carta *baralho){
     int contador = 0;
 
     for(int i = 0; i < 52; i++){
@@ -52,8 +52,10 @@ void conta_cartas_baralho(Carta *baralho){
     }
     if(contador == 0){
         printf("\nSem cartas no baralho");
+        return contador;
     }
     printf("\nCartas no baralho: %d\n", contador);
+    return contador;
 }
 
 void preenche_baralho(Carta *baralho){
@@ -243,10 +245,14 @@ int pede_instrucoes(){
             printf("Carta comprada");
             muda_cor(0);
             printf("\n\n");
-        }
-        else if(instrucao == 9){
+        }else if(instrucao == 9){
             muda_cor(33);
             printf("Pilha de descarte selecionada");
+            muda_cor(0);
+            printf("\n\n");
+        }else if(instrucao == 10){
+            muda_cor(33);
+            printf("Restituindo o baralho");
             muda_cor(0);
             printf("\n\n");
         }else if(instrucao != 0){
@@ -255,7 +261,7 @@ int pede_instrucoes(){
             muda_cor(0);
             printf("\n\n");
         }
-    }while(!(instrucao >= 0 && instrucao <= 9));
+    }while(!(instrucao >= 0 && instrucao <= 10));
     return instrucao;
 }
 
@@ -353,20 +359,13 @@ void mostrar_deposito(Carta pilha_descarte[], int primeira_carta) {
     printf("A carta no deposito é: ");
     if (primeira_carta >= 0) {
         Carta carta = pilha_descarte[primeira_carta];
-
-        if (carta.naipe >= 2) { 
-            muda_cor(31); 
-        } else { 
-            muda_cor(0); 
-        }
-        
+        if (carta.naipe >= 2) muda_cor(31);
         printf("[%d%s]", carta.valor, lista_de_naipes[carta.naipe]);
         muda_cor(0); 
     } else {
         printf("[ ]");
     }
     printf("\n");
-
 }
 
 int quantas_visiveis(Carta pilhas[NUM_PILHAS][MAX_CARTAS], int indexPilha){
@@ -408,7 +407,7 @@ void mostra_jogo(Carta pilhas[NUM_PILHAS][MAX_CARTAS], int tamanho_pilha[NUM_PIL
 
     mostra_pilhas(pilhas, tamanho_pilha);
     mostrar_deposito(pilha_descarte, primeira_carta);
-    conta_cartas_baralho(baralho);
+    if(conta_cartas_baralho(baralho) == 0) printf("\n10 - voltar as cartas para o baralho");
 }
 
 int selecionar_carta(int pilhaOrigem, Carta pilhas[NUM_PILHAS][MAX_CARTAS]){
@@ -447,7 +446,7 @@ int selecionar_pilha_destino(){
     return pilhaDestino;
 }
 
-void move_do_deposito(Carta pilhas[NUM_PILHAS][MAX_CARTAS], Carta descarte[52], int pilhaDestino, int *primeira_carta, int *tamanho_pilha){
+void move_do_deposito(Carta pilhas[NUM_PILHAS][MAX_CARTAS], Carta descarte[52], int pilhaDestino, int *tamanho_pilha){
     Carta carta_sera_movida;
     for(int i = 0; i < 52; i++){
         if(descarte[i].valor != 0){
@@ -554,6 +553,12 @@ void move_do_deposito(Carta pilhas[NUM_PILHAS][MAX_CARTAS], Carta descarte[52], 
     
 }
 
+void restitui_baralho(Carta* baralho, Carta pilha_descarte[]){
+    for(int i = 0; i < 52; i++){
+        baralho[i] = pilha_descarte[i];
+    }
+}
+
 int main(){
     Carta baralho[52];
     Carta pilhas[7][13];
@@ -612,8 +617,11 @@ int main(){
             do {
                 pilhaDestino = selecionar_pilha_destino();
             } while (pilhaDestino < 0 || pilhaDestino > 7);
-            move_do_deposito(pilhas, pilha_descarte, pilhaDestino, &primeira_carta, tamanho_pilha);
+            move_do_deposito(pilhas, pilha_descarte, pilhaDestino, tamanho_pilha);
         }
+
+        else if(conta_cartas_baralho(baralho) == 0 && instrucao == 10) restitui_baralho(baralho, pilha_descarte);
+
 
     } while(instrucao != 0);
 
