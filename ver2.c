@@ -109,7 +109,7 @@ void cria_pilhas(Carta *baralho, Carta pilhas[7][13], int *tamanho_pilha){
             }else {
                 pilhas[i][j].valor = 0;
                 pilhas[i][j].naipe = 0;
-                pilhas[i][j].visivel = false;
+                pilhas[i][j].visivel = true;
             }
         }
         tamanho_pilha[i] = i + 1;
@@ -120,6 +120,7 @@ void mostra_pilhas(Carta pilhas[7][13], int *tamanho_pilha){
     for(int i = 0; i < 7; i++){
         printf("\033[0mPilha %d: ", i + 1);
         for(int j = 0; j < tamanho_pilha[i]; j++){
+            
             if(pilhas[i][j].valor != 0){
                 if(j < tamanho_pilha[i] && pilhas[i][j].visivel){
                     if (pilhas[i][j].naipe == 2 || pilhas[i][j].naipe == 3) printf("\033[1;31m%d%s \033[0m", pilhas[i][j].valor, lista_de_naipes[pilhas[i][j].naipe]);
@@ -128,6 +129,7 @@ void mostra_pilhas(Carta pilhas[7][13], int *tamanho_pilha){
                     printf("[] ");
                 }
             }
+            
         }
         printf("\n");
     }
@@ -347,7 +349,7 @@ void pilhas_finais(Carta pilhas[NUM_PILHAS][MAX_CARTAS], int pilhaOrigem, int *t
 
 void mostrar_deposito(Carta pilha_descarte[], int primeira_carta) {
     // for(int i = 0; i < 52; i++) printf("[%d%s]", pilha_descarte[i].valor, lista_de_naipes[pilha_descarte[i].naipe]);
-    printf("A carta no deposito é: ");
+    printf("\nA carta no deposito é: ");
     if (primeira_carta >= 0) {
         Carta carta = pilha_descarte[primeira_carta];
         if (carta.naipe >= 2) muda_cor(31);
@@ -363,7 +365,7 @@ int quantas_visiveis(Carta pilhas[NUM_PILHAS][MAX_CARTAS], int indexPilha){
     int quantas_visiveis=0;
 
     for (int i=0; i<MAX_CARTAS; i++){
-        if (pilhas[indexPilha][i].visivel == true) quantas_visiveis++; 
+        if (pilhas[indexPilha][i].visivel == true && pilhas[indexPilha][i].valor != 0) quantas_visiveis++; 
     }
 
     return quantas_visiveis;
@@ -390,13 +392,30 @@ int quant_pilha(Carta pilha[MAX_CARTAS]){
     return contador;
 }
 
+void mostracao_de_pilhas(Carta pilhas[NUM_PILHAS][MAX_CARTAS]){
+    
+    for (int i=0; i<NUM_PILHAS; i++){
+        printf("\nPilha %d: ", i+1);
+
+        for (int j=0; j<MAX_CARTAS; j++){
+            if (pilhas[i][j].visivel == true){
+                if (pilhas[i][j].naipe == 2 || pilhas[i][j].naipe == 3) printf("\033[1;31m%d%s  \033[0m", pilhas[i][j].valor, lista_de_naipes[pilhas[i][j].naipe]);
+                else printf("%d%s  ", pilhas[i][j].valor, lista_de_naipes[pilhas[i][j].naipe]);
+            }else if (pilhas[i][j].visivel == false && pilhas[i][j].valor !=0) printf("[ ] ");
+        }
+    }
+
+}
+
 void mostra_jogo(Carta pilhas[NUM_PILHAS][MAX_CARTAS], int tamanho_pilha[NUM_PILHAS], Carta baralho[CARTAS_BARALHO], Carta pilha_descarte[], int primeira_carta){
     limpa_tela();
     printf("Paciencia!\n\n");
 
     printf("[%d♥] [%d♦] [%d♣] [%d♠]\n\n", quant_pilha(pilhaOuros), quant_pilha(pilhaCopas), quant_pilha(pilhaPaus), quant_pilha(pilhaEspadas));
 
-    mostra_pilhas(pilhas, tamanho_pilha);
+    // mostra_pilhas(pilhas, tamanho_pilha);
+    mostracao_de_pilhas(pilhas);
+
     mostrar_deposito(pilha_descarte, primeira_carta);
     if(conta_cartas_baralho(baralho) == 0) printf("\n10 - voltar as cartas para o baralho");
 }
@@ -551,10 +570,20 @@ void restitui_baralho(Carta* baralho, Carta pilha_descarte[]){
     }
 }
 
+
+
 int main(){
     Carta baralho[52];
     Carta pilhas[7][13];
     Carta pilha_descarte[52];
+
+    for (int i=0; i<7; i++){
+        for (int j=0; j<13; j++){
+            pilhas[i][j].valor = 0;
+            pilhas[i][j].naipe = 0;
+            pilhas[i][j].visivel = true;
+        }
+    }
 
     for (int i = 0; i < 52; i++){
         pilha_descarte[i].valor = 0;
@@ -606,6 +635,7 @@ int main(){
                     int topo_destino = carta_topo(pilhaDestino, pilhas)+1;
         
                     if (indexCartaMover+contagem_visiveis <= 13 && indexCartaMover+contagem_visiveis >= 0){
+                        // erro na função
                         for (int i=indexCartaMover; i<indexCartaMover+contagem_visiveis; i++){
                             pilhas[pilhaDestino][topo_destino] = pilhas[pilhaOrigem][i];
                             
