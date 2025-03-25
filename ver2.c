@@ -131,15 +131,6 @@ void mostra_pilhas(Carta pilhas[7][13], int *tamanho_pilha){
         }
         printf("\n");
     }
-
-    // printf("\033[0m");
-    // for (int i=0; i<4; i++){
-    //     printf("Pilha Final %d: \t");
-    //     for (int j=0; j<MAX_CARTAS; j++){
-    //         printf("%d ", );
-    //     }
-    // }
-    // printf("\n\n");
 }
 
 int carta_topo(int indice_pilha, Carta pilhas[NUM_PILHAS][MAX_CARTAS]){
@@ -418,7 +409,8 @@ int selecionar_carta(int pilhaOrigem, Carta pilhas[NUM_PILHAS][MAX_CARTAS]){
     if (quant_visiveis == 0){
         printf("Pilha Vazia");
         return -1;
-    }
+    } else if (quant_visiveis == 1) return primeira_visivel;
+    
 
     muda_cor(33);
     printf("Qual carta você quer mover? \n");
@@ -563,6 +555,7 @@ int main(){
     Carta baralho[52];
     Carta pilhas[7][13];
     Carta pilha_descarte[52];
+
     for (int i = 0; i < 52; i++){
         pilha_descarte[i].valor = 0;
         pilha_descarte[i].naipe = 0;
@@ -586,8 +579,8 @@ int main(){
 
         if (instrucao >= 1 && instrucao <= 7){
             int pilhaDestino;
-
             int pilhaOrigem = instrucao-1;
+
             int indexCartaMover = selecionar_carta(pilhaOrigem, pilhas);
             
             if (indexCartaMover == -1) continue; //pilha vazia
@@ -595,10 +588,34 @@ int main(){
             printf("\nCarta selecionada: %d de %s\n\n", pilhas[pilhaOrigem][indexCartaMover].valor, 
             lista_de_naipes[pilhas[pilhaOrigem][indexCartaMover].naipe]);
 
+            //conta quantas cartas visiveis tem depois da selecionada
+            int contagem_visiveis=0;
+            for (int i=indexCartaMover; i<13; i++){
+                if (pilhas[pilhaOrigem][i].valor != 0) contagem_visiveis++;
+                // printf("visiveis: %d\n", contagem_visiveis);
+            }
+
+
             do {
                 pilhaDestino = selecionar_pilha_destino();
             } while (pilhaDestino < 0 || pilhaDestino > 7);
             
+            if (movimento_valido(pilhas[pilhaOrigem][indexCartaMover], pilhas[pilhaDestino][carta_topo(pilhaDestino, pilhas)])){
+                
+                if (contagem_visiveis>1 && pilhaDestino >= 0 && pilhaDestino <= 6){
+                    int topo_destino = carta_topo(pilhaDestino, pilhas)+1;
+        
+                    if (indexCartaMover+contagem_visiveis <= 13 && indexCartaMover+contagem_visiveis >= 0){
+                        for (int i=indexCartaMover; i<indexCartaMover+contagem_visiveis; i++){
+                            pilhas[pilhaDestino][topo_destino] = pilhas[pilhaOrigem][i];
+                            
+                            pilhas[pilhaOrigem][i].valor = 0;
+                            topo_destino++;
+                        }
+                    }
+                }
+            }
+
             if (pilhaDestino >= 0 && pilhaDestino <= 6){
                 move_cartas(pilhas, tamanho_pilha, pilhaOrigem, pilhaDestino);
             } else if (pilhaDestino == 7){
