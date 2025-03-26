@@ -135,17 +135,11 @@ void mostra_pilhas(Carta pilhas[7][13], int *tamanho_pilha){
     }
 }
 
-int carta_topo(int indice_pilha, Carta pilhas[NUM_PILHAS][MAX_CARTAS]){
-    int indice_carta = 0;
-
-    for(int i = 0; i < MAX_CARTAS; i++){
-        if(pilhas[indice_pilha][i].valor == 0){
-            indice_carta = i - 1;
-            break;
-        }
-    }
-    return indice_carta;
+int carta_topo(int pilhaDestino, Carta pilhas[7][13]) {
+    for (int i = 12; i >= 0; i--) if (pilhas[pilhaDestino][i].valor != 0) return i;
+    return -1;  //pilha vazia
 }
+
 
 bool movimento_valido(Carta origem, Carta destino){
     if(origem.naipe <= 1){
@@ -565,9 +559,15 @@ void move_do_deposito(Carta pilhas[NUM_PILHAS][MAX_CARTAS], Carta descarte[52], 
 }
 
 void restitui_baralho(Carta* baralho, Carta pilha_descarte[]){
-    for(int i = 0; i < 52; i++){
+    
+    int i=0;
+    
+    while(pilha_descarte[i].valor != 0){
         baralho[i] = pilha_descarte[i];
+        pilha_descarte[i].valor = 0;
+        i++;
     }
+
 }
 
 
@@ -634,11 +634,11 @@ int main(){
                 if (contagem_visiveis>1 && pilhaDestino >= 0 && pilhaDestino <= 6){
                     int topo_destino = carta_topo(pilhaDestino, pilhas)+1;
         
-                    if (indexCartaMover+contagem_visiveis <= 13 && indexCartaMover+contagem_visiveis >= 0){
+                    if (indexCartaMover + contagem_visiveis <= 13){
                         // erro na função
                         for (int i=indexCartaMover; i<indexCartaMover+contagem_visiveis; i++){
                             pilhas[pilhaDestino][topo_destino] = pilhas[pilhaOrigem][i];
-                            
+                            printf("Movendo carta para pilha %d na posição %d\n", pilhaDestino, topo_destino);
                             pilhas[pilhaOrigem][i].valor = 0;
                             topo_destino++;
                         }
