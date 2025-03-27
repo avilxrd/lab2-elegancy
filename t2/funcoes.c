@@ -37,12 +37,14 @@ void prencheContagem(char *string, estrutura *contagem){
     }
 }
 
+// compara quantidades para ordenar elas atraves do qsort
 int comparQuants(const void *a, const void *b){
     estrutura *elem1 = (estrutura *)a;
     estrutura *elem2 = (estrutura *)b;
     return elem2->quantidade - elem1->quantidade;
 }
 
+// vai pegar as quantidades de cada letra e somar ate a metade especificada (MUDAR O NOME DA FUNCAO ELA NAO FAZ MUITO SENTIDO)
 int divQuants(estrutura *contagem, int count){
     int half = 0, i = 0;
 

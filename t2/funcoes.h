@@ -7,7 +7,8 @@ typedef struct{
     int quantidade;
 }estrutura;
 
-//calcula a frequencia de cada caractere ASCII
+// para mais informacoes sobre as funcoes - checar o arquivo funcoes.c
+
 void calculaFreq(int *hist, const char *string);
 int countCharDiff(char *string);
 void prencheContagem(char *string, estrutura *contagem);

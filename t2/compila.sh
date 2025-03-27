@@ -1,5 +1,5 @@
-echo "Compilando arquivos .c para .o..."
+echo "compilando arquivos .c para .o..."
 gcc *.c -c
-echo "Linkando arquivos .o para gerar o executável..."
+echo "linkando arquivos .o para gerar o executavel..."
 gcc -o main main.o funcoes.o
-echo "Compilação concluída. Execute o programa com ./main"
+echo "compilação concluída - para executar use ./main"
