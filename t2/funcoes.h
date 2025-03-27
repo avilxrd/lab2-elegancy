@@ -11,3 +11,5 @@ typedef struct{
 void calculaFreq(int *hist, const char *string);
 int countCharDiff(char *string);
 void prencheContagem(char *string, estrutura *contagem);
+int comparQuants(const void *a, const void *b);
+int divQuants(estrutura *contagem, int count);

@@ -32,6 +32,14 @@ int main(){
         prencheContagem(string, contagem);
         for(int i = 0; i < countChar; i++) printf("%c = %d\n", contagem[i].caractere, contagem[i].quantidade);
 
+        qsort(contagem, countChar, sizeof(estrutura), comparQuants);
+        printf("\ncaracteres ordenados por quantidade:\n");
+        for (int i = 0; i < countChar; i++) printf("%c = %d\n", contagem[i].caractere, contagem[i].quantidade);
+
+        int halfCount = divQuants(contagem, count);
+        printf("a metade dos caracteres eh %d\n", halfCount);
+
+        // sumQuants(contagem, halfCount);
     }
 
     fclose(f);
